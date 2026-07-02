@@ -58,8 +58,15 @@ def load_yaml(file_path):
 
 def save_yaml(file_path, data):
     try:
+        if data is None:
+            print("YAML save error: no data to save.")
+            return
+
         with open(file_path, "w", encoding="utf-8") as f:
             yaml.dump(data, f, allow_unicode=True, sort_keys=False)
+
+    except yaml.YAMLError:
+        print("YAML save error: invalid YAML format.")
     except Exception as e:
         print(f"YAML save error: {e}")
 
