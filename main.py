@@ -10,7 +10,14 @@ from dicttoxml import dicttoxml
 def load_json(file_path):
     try:
         with open(file_path, "r", encoding="utf-8") as f:
-            return json.load(f)
+            data = json.load(f)
+            return data
+    except json.JSONDecodeError:
+        print("JSON error: invalid JSON syntax in file.")
+        return None
+    except FileNotFoundError:
+        print("JSON error: file not found.")
+        return None
     except Exception as e:
         print(f"JSON error: {e}")
         return None
@@ -63,9 +70,7 @@ def save_xml(file_path, data):
 
 # ---------------- MAIN ----------------
 def main():
-    parser = argparse.ArgumentParser(
-        description="Data Converter JSON/YAML/XML"
-    )
+    parser = argparse.ArgumentParser(description="Data Converter JSON/YAML/XML")
 
     parser.add_argument("input_file", help="Ścieżka do pliku wejściowego")
     parser.add_argument("output_file", help="Ścieżka do pliku wyjściowego")
@@ -77,7 +82,7 @@ def main():
         print(f"Error: File '{args.input_file}' does not exist.")
         return
 
-    # Zamiana rozszerzeń na małe litery
+    # Normalizacja nazw plików
     input_file = args.input_file.lower()
     output_file = args.output_file.lower()
 
