@@ -42,7 +42,15 @@ def save_json(file_path, data):
 def load_yaml(file_path):
     try:
         with open(file_path, "r", encoding="utf-8") as f:
-            return yaml.safe_load(f)
+            data = yaml.safe_load(f)
+            return data
+
+    except yaml.YAMLError:
+        print("YAML error: invalid YAML syntax in file.")
+        return None
+    except FileNotFoundError:
+        print("YAML error: file not found.")
+        return None
     except Exception as e:
         print(f"YAML error: {e}")
         return None
