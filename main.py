@@ -41,9 +41,7 @@ def save_json(file_path, data):
 def load_yaml(file_path):
     try:
         with open(file_path, "r", encoding="utf-8") as f:
-            data = yaml.safe_load(f)
-            return data
-
+            return yaml.safe_load(f)
     except yaml.YAMLError:
         print("YAML error: invalid YAML syntax in file.")
         return None
@@ -74,9 +72,7 @@ def save_yaml(file_path, data):
 def load_xml(file_path):
     try:
         with open(file_path, "r", encoding="utf-8") as f:
-            data = xmltodict.parse(f.read())
-            return data
-
+            return xmltodict.parse(f.read())
     except FileNotFoundError:
         print("XML error: file not found.")
         return None
@@ -87,9 +83,15 @@ def load_xml(file_path):
 
 def save_xml(file_path, data):
     try:
+        if data is None:
+            print("XML save error: no data to save.")
+            return
+
         xml_bytes = dicttoxml(data, custom_root="root", attr_type=False)
+
         with open(file_path, "wb") as f:
             f.write(xml_bytes)
+
     except Exception as e:
         print(f"XML save error: {e}")
 
