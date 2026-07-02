@@ -10,8 +10,7 @@ from dicttoxml import dicttoxml
 def load_json(file_path):
     try:
         with open(file_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-            return data
+            return json.load(f)
     except json.JSONDecodeError:
         print("JSON error: invalid JSON syntax in file.")
         return None
@@ -75,9 +74,14 @@ def save_yaml(file_path, data):
 def load_xml(file_path):
     try:
         with open(file_path, "r", encoding="utf-8") as f:
-            return xmltodict.parse(f.read())
+            data = xmltodict.parse(f.read())
+            return data
+
+    except FileNotFoundError:
+        print("XML error: file not found.")
+        return None
     except Exception as e:
-        print(f"XML error: {e}")
+        print(f"XML error: invalid XML syntax or parsing error: {e}")
         return None
 
 
