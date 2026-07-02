@@ -1,34 +1,121 @@
 import argparse
 import json
+import os
+import yaml
+import xmltodict
+from dicttoxml import dicttoxml
 
 
+# ---------------- JSON ----------------
 def load_json(file_path):
     try:
         with open(file_path, "r", encoding="utf-8") as f:
             return json.load(f)
-    except FileNotFoundError:
-        print("Błąd: plik nie istnieje")
-        return None
-    except json.JSONDecodeError:
-        print("Błąd: niepoprawny JSON")
+    except Exception as e:
+        print(f"JSON error: {e}")
         return None
 
 
+def save_json(file_path, data):
+    try:
+        with open(file_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=4, ensure_ascii=False)
+    except Exception as e:
+        print(f"JSON save error: {e}")
+
+
+# ---------------- YAML ----------------
+def load_yaml(file_path):
+    try:
+        with open(file_path, "r", encoding="utf-8") as f:
+            return yaml.safe_load(f)
+    except Exception as e:
+        print(f"YAML error: {e}")
+        return None
+
+
+def save_yaml(file_path, data):
+    try:
+        with open(file_path, "w", encoding="utf-8") as f:
+            yaml.dump(data, f, allow_unicode=True, sort_keys=False)
+    except Exception as e:
+        print(f"YAML save error: {e}")
+
+
+# ---------------- XML ----------------
+def load_xml(file_path):
+    try:
+        with open(file_path, "r", encoding="utf-8") as f:
+            return xmltodict.parse(f.read())
+    except Exception as e:
+        print(f"XML error: {e}")
+        return None
+
+
+def save_xml(file_path, data):
+    try:
+        xml_bytes = dicttoxml(data, custom_root="root", attr_type=False)
+        with open(file_path, "wb") as f:
+            f.write(xml_bytes)
+    except Exception as e:
+        print(f"XML save error: {e}")
+
+
+# ---------------- MAIN ----------------
 def main():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description="Data Converter JSON/YAML/XML"
+    )
 
-    parser.add_argument("input_file")
-    parser.add_argument("output_file")
+    parser.add_argument("input_file", help="Ścieżka do pliku wejściowego")
+    parser.add_argument("output_file", help="Ścieżka do pliku wyjściowego")
 
     args = parser.parse_args()
 
-    data = load_json(args.input_file)
-
-    if data is None:
+    # Sprawdzenie czy plik istnieje
+    if not os.path.exists(args.input_file):
+        print(f"Error: File '{args.input_file}' does not exist.")
         return
 
-    print("Wczytane dane:")
-    print(data)
+    # Zamiana rozszerzeń na małe litery
+    input_file = args.input_file.lower()
+    output_file = args.output_file.lower()
+
+    # -------- INPUT --------
+    if input_file.endswith(".json"):
+        data = load_json(args.input_file)
+
+    elif input_file.endswith((".yaml", ".yml")):
+        data = load_yaml(args.input_file)
+
+    elif input_file.endswith(".xml"):
+        data = load_xml(args.input_file)
+
+    else:
+        print("Unsupported input format.")
+        return
+
+    if data is None:
+        print("Failed to load input data.")
+        return
+
+    print("Wczytane dane:", data)
+
+    # -------- OUTPUT --------
+    if output_file.endswith(".json"):
+        save_json(args.output_file, data)
+
+    elif output_file.endswith((".yaml", ".yml")):
+        save_yaml(args.output_file, data)
+
+    elif output_file.endswith(".xml"):
+        save_xml(args.output_file, data)
+
+    else:
+        print("Unsupported output format.")
+        return
+
+    print("Zapisano do:", args.output_file)
 
 
 if __name__ == "__main__":
