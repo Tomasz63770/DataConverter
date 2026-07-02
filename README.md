@@ -38,6 +38,6 @@ Projekt zawiera:
 
 python main.py input.json output.yaml
 
-Autor
-Tomasz63770
+
+
 
