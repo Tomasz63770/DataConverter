@@ -25,8 +25,15 @@ def load_json(file_path):
 
 def save_json(file_path, data):
     try:
+        if data is None:
+            print("JSON save error: no data to save.")
+            return
+
         with open(file_path, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=4, ensure_ascii=False)
+
+    except TypeError:
+        print("JSON save error: data is not serializable.")
     except Exception as e:
         print(f"JSON save error: {e}")
 
@@ -77,12 +84,10 @@ def main():
 
     args = parser.parse_args()
 
-    # Sprawdzenie czy plik istnieje
     if not os.path.exists(args.input_file):
         print(f"Error: File '{args.input_file}' does not exist.")
         return
 
-    # Normalizacja nazw plików
     input_file = args.input_file.lower()
     output_file = args.output_file.lower()
 
