@@ -36,7 +36,7 @@ def load_file():
                 return
 
             text.delete("1.0", tk.END)
-            text.insert(tk.END, str(data))
+            text.insert(tk.END, json.dumps(data, indent=4, ensure_ascii=False))
 
         except Exception as e:
             messagebox.showerror("Error", str(e))
